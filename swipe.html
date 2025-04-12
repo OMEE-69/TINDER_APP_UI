@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Swipe Profiles | VIT Tinder</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swipe | VIT Tinder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
@@ -12,211 +12,120 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            color: white;
+            min-height: 100vh;
             flex-direction: column;
+            color: white;
+            margin: 0;
             padding: 20px;
             box-sizing: border-box;
         }
 
         .card {
             background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
+            padding: 40px;
             border-radius: 15px;
             text-align: center;
             width: 350px;
             max-width: 100%;
-        }
-
-        img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            gap: 10px;
-        }
-
-        button {
-            width: 60px;
-            height: 60px;
-            border: none;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-            background-color: white;
-        }
-
-        button:hover {
-            box-shadow: 0 0 15px #ff69b4;
-        }
-
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
             display: none;
-            z-index: 100;
-            max-width: 90%;
-            box-sizing: border-box;
         }
 
-        .popup button {
-            background: red;
-            color: white;
+        .card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            object-fit: cover;
+            border: 2px solid #ff69b4;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        .actions button {
+            background: #ff69b4;
             border: none;
-            padding: 10px;
-            margin-top: 10px;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 25px;
             cursor: pointer;
-            border-radius: 5px;
+            color: white;
+            transition: 0.3s;
         }
 
-        #profileCounter {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #ccc;
+        .actions button:hover {
+            box-shadow: 0 0 10px #ff69b4;
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            img {
-                height: auto;
-                max-height: 250px;
-            }
+        #loading {
+            font-size: 20px;
+        }
 
-            button {
-                width: 50px;
-                height: 50px;
-                font-size: 18px;
-            }
-
-            .buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
+        #noMore {
+            font-size: 18px;
+            color: lightgray;
+            display: none;
+            text-align: center;
         }
     </style>
 </head>
+
 <body>
-    <div class="card">
-        <h2 id="profileName">Loading...</h2>
-        <img id="profileImg" src="https://via.placeholder.com/300x300.png?text=No+Image">
+    <div id="loading">🔄 Loading profiles...</div>
+    <div class="card" id="profileCard">
+        <img id="profileImg" src="" alt="Profile">
+        <h3 id="profileName"></h3>
         <p id="profileBio"></p>
-        <p><strong>Interest:</strong> <span id="profileInterest"></span></p>
-        <div id="profileCounter"></div>
-        <div class="buttons">
-            <button onclick="goBack()">↩️</button>
-            <button onclick="swipeLeft()">❌</button>
-            <button onclick="swipeRight()">💖</button>
+        <p><strong>Interests:</strong> <span id="profileInterests"></span></p>
+        <div class="actions">
+            <button onclick="swipeLeft()">❌ Dislike</button>
+            <button onclick="swipeRight()">❤️ Like</button>
         </div>
     </div>
-
-    <div id="matchPopup" class="popup">
-        <h3>🎉 Match Found!</h3>
-        <p>Contact each other:</p>
-        <p><strong>You:</strong> <span id="myPhone"></span></p>
-        <p><strong>Matched User:</strong> <span id="matchPhone"></span></p>
-        <button onclick="closePopup()">Close</button>
-    </div>
+    <div id="noMore">🚫 No more profiles to show!</div>
 
     <script>
-      let users = JSON.parse(localStorage.getItem("users")) || [];
-let myName = localStorage.getItem("myUsername") || "";
-let myPhone = localStorage.getItem("myPhone") || "";
-let myLikes = JSON.parse(localStorage.getItem("myLikes")) || [];
-let currentIndex = 0;
-let previousIndex = null;
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let myUsername = localStorage.getItem("myUsername");
+        let remaining = users.filter(user => user.name.toLowerCase() !== myUsername?.toLowerCase());
+        let currentIndex = 0;
 
-let availableUsers = users.filter(user => user.name !== myName);
+        function showNextProfile() {
+            if (currentIndex >= remaining.length) {
+                document.getElementById("profileCard").style.display = "none";
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("noMore").style.display = "block";
+                return;
+            }
 
-function loadProfile() {
-    if (currentIndex >= availableUsers.length) {
-        document.body.innerHTML = "<h2>No more profiles available!</h2>";
-        return;
-    }
-
-    let user = availableUsers[currentIndex];
-    document.getElementById("profileName").textContent = user.name;
-    document.getElementById("profileImg").src = user.img || 'https://via.placeholder.com/300x300.png?text=No+Image';
-    document.getElementById("profileBio").textContent = user.bio || "No bio provided.";
-    document.getElementById("profileInterest").textContent = user.interests || "N/A";
-    document.getElementById("profileCounter").textContent = Profile ${currentIndex + 1} of ${availableUsers.length};
-}
-
-function swipeLeft() {
-    previousIndex = currentIndex;
-    currentIndex++;
-    loadProfile();
-}
-
-function goBack() {
-    location.href = "index.html";
-}
-
-function swipeRight() {
-    let likedUser = availableUsers[currentIndex];
-    let likedUserLikesKey = likedUser.name + "_likes";
-    let likedUserLikes = JSON.parse(localStorage.getItem(likedUserLikesKey)) || [];
-
-    if (!myLikes.includes(likedUser.name)) {
-        myLikes.push(likedUser.name);
-        localStorage.setItem("myLikes", JSON.stringify(myLikes));
-    }
-
-    let myLikeKey = myName + "_likes";
-    let myLikeStore = JSON.parse(localStorage.getItem(myLikeKey)) || [];
-    if (!myLikeStore.includes(likedUser.name)) {
-        myLikeStore.push(likedUser.name);
-        localStorage.setItem(myLikeKey, JSON.stringify(myLikeStore));
-    }
-
-    if (likedUserLikes.includes(myName)) {
-        let matches = JSON.parse(localStorage.getItem("matches")) || [];
-        let isAlreadyMatched = matches.some(m =>
-            (m.name1 === myName && m.name2 === likedUser.name) ||
-            (m.name1 === likedUser.name && m.name2 === myName)
-        );
-
-        if (!isAlreadyMatched) {
-            matches.push({
-                name1: myName,
-                phone1: myPhone || "N/A",
-                name2: likedUser.name,
-                phone2: likedUser.phone || "N/A"
-            });
-            localStorage.setItem("matches", JSON.stringify(matches));
+            let user = remaining[currentIndex];
+            document.getElementById("profileImg").src = user.img;
+            document.getElementById("profileName").innerText = user.name;
+            document.getElementById("profileBio").innerText = user.bio;
+            document.getElementById("profileInterests").innerText = user.interests;
+            document.getElementById("profileCard").style.display = "block";
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("noMore").style.display = "none";
         }
 
-        document.getElementById("myPhone").textContent = myPhone;
-        document.getElementById("matchPhone").textContent = likedUser.phone || "N/A";
-        document.getElementById("matchPopup").style.display = "block";
+        function swipeLeft() {
+            currentIndex++;
+            showNextProfile();
+        }
 
-        setTimeout(() => {
-            closePopup();
-        }, 5000);
-    }
+        function swipeRight() {
+            let liked = JSON.parse(localStorage.getItem("likedUsers")) || [];
+            liked.push(remaining[currentIndex]);
+            localStorage.setItem("likedUsers", JSON.stringify(liked));
+            currentIndex++;
+            showNextProfile();
+        }
 
-    previousIndex = currentIndex;
-    currentIndex++;
-    loadProfile();
-}
-
-function closePopup() {
-    document.getElementById("matchPopup").style.display = "none";
-}
-
-loadProfile();
+        // Show first profile after delay
+        window.onload = function() {
+            setTimeout(showNextProfile, 1000);
+        };
     </script>
 </body>
 </html>
