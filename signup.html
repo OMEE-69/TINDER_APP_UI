@@ -158,56 +158,56 @@
     </div>
 
     <script>
-        let selectedAvatar = "";
+       let selectedAvatar = "";
 
-        function selectAvatar(img) {
-            document.querySelectorAll(".avatar-preview img").forEach(i => i.classList.remove("selected"));
-            img.classList.add("selected");
-            selectedAvatar = img.src;
-        }
+function selectAvatar(img) {
+    document.querySelectorAll(".avatar-preview img").forEach(i => i.classList.remove("selected"));
+    img.classList.add("selected");
+    selectedAvatar = img.src;
+}
 
-        function saveProfile() {
-            let name = document.getElementById("name").value.trim();
-            let phone = document.getElementById("phone").value.trim();
-            let bio = document.getElementById("bio").value.trim();
-            let interests = document.getElementById("interests").value;
+function saveProfile() {
+    let name = document.getElementById("name").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let bio = document.getElementById("bio").value.trim();
+    let interests = document.getElementById("interests").value;
 
-            if (!name || !phone || !bio || interests === "Choose Interests" || !selectedAvatar) {
-                alert("❌ Please fill all fields and select an avatar!");
-                return;
-            }
+    if (!name || !phone || !bio || interests === "Choose Interests" || !selectedAvatar) {
+        alert("❌ Please fill all fields and select an avatar!");
+        return;
+    }
 
-            if (!/^\d{10}$/.test(phone)) {
-                alert("❌ Please enter a valid 10-digit phone number!");
-                return;
-            }
+    if (!/^\d{10}$/.test(phone)) {
+        alert("❌ Please enter a valid 10-digit phone number!");
+        return;
+    }
 
-            let users = JSON.parse(localStorage.getItem("users")) || [];
-            let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
 
-            if (index !== -1) {
-                users[index] = { name, phone, bio, interests, img: selectedAvatar };
-            } else {
-                users.push({ name, phone, bio, interests, img: selectedAvatar });
-            }
+    if (index !== -1) {
+        users[index] = { name, phone, bio, interests, img: selectedAvatar };
+    } else {
+        users.push({ name, phone, bio, interests, img: selectedAvatar });
+    }
 
-            try {
-                localStorage.setItem("users", JSON.stringify(users));
-                localStorage.setItem("myUsername", name);
-                localStorage.setItem("myPhone", phone);
-                document.getElementById("successPopup").style.display = "block";
-            } catch (error) {
-                alert("❌ Storage Limit Reached! Try using a different browser.");
-            }
-        }
+    try {
+        localStorage.setItem("users", JSON.stringify(users));
+        localStorage.setItem("myUsername", name);
+        localStorage.setItem("myPhone", phone);
+        document.getElementById("successPopup").style.display = "block";
+    } catch (error) {
+        alert("❌ Storage Limit Reached! Try using a different browser.");
+    }
+}
 
-        function goToSwipe() {
-            location.href = "swipe.html";
-        }
+function goToSwipe() {
+    location.href = "swipe.html";
+}
 
-        function goHome() {
-            location.href = "index.html";
-        }
+function goHome() {
+    location.href = "index.html";
+}
     </script>
 </body>
 </html>
