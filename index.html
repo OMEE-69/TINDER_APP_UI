@@ -1,88 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>VIT Tinder ❤️‍🔥</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-        }
-        .container {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 50px 30px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(255, 105, 180, 0.2);
-        }
-        h1 {
-            font-size: 2.7em;
-            margin-bottom: 10px;
-            color: #ff69b4; 
-            text-shadow: 0 0 5px rgba(255, 105, 180, 0.7);
-        }
-        .tagline {
-            margin-bottom: 20px;
-            font-weight: 400;
-            font-size: 1.1em;
-            color: #ddd;
-        }
-        .warning {
-            background: rgba(255, 105, 180, 0.2);
-            padding: 10px;
-            border: 1px solid #ff69b4;
-            border-radius: 8px;
-            font-weight: bold;
-            margin-bottom: 25px;
-            font-size: 0.9em;
-            color: #ff69b4;
-        }
-        button {
-            padding: 12px 25px;
-            margin: 10px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        .ms-btn {
-            background: #ff69b4;
-            color: #0f0c29;
-        }
-        .btn {
-            background: #8e44ad;
-            color: #fff;
-        }
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
-        }
-        .emailbtn{
-            background: purple;
-            color: white;
-        }
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VIT Tinder ❤️‍🔥</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 50px 30px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(255, 105, 180, 0.2);
+      max-width: 600px;
+      width: 90%;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 2.7em;
+      margin-bottom: 10px;
+      color: #ff69b4;
+      text-shadow: 0 0 5px rgba(255, 105, 180, 0.7);
+    }
+
+    .tagline {
+      margin-bottom: 20px;
+      font-weight: 400;
+      font-size: 1.1em;
+      color: #ddd;
+    }
+
+    .warning {
+      background: rgba(255, 105, 180, 0.2);
+      padding: 10px;
+      border: 1px solid #ff69b4;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 25px;
+      font-size: 0.9em;
+      color: #ff69b4;
+    }
+
+    button {
+      padding: 12px 25px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .ms-btn {
+      background: #ff69b4;
+      color: #0f0c29;
+    }
+
+    .btn {
+      background: #8e44ad;
+      color: #fff;
+    }
+
+    .emailbtn {
+      background: purple;
+      color: white;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4);
+    }
+
+    @media (min-width: 600px) {
+      button {
+        font-size: 18px;
+        padding: 14px 30px;
+      }
+
+      h1 {
+        font-size: 3em;
+      }
+
+      .tagline {
+        font-size: 1.2em;
+      }
+
+      .warning {
+        font-size: 1em;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>VIT Tinder ❤️‍🔥</h1>
-        <p class="tagline">VIT’s exclusive matchmaking hub 😏</p>
-        <p class="warning">⚠️ Only for VIT students! Outsiders, stay jealous 😎</p>
-        <button class="btn" onclick="location.href='signup.html'">Sign up with Phone Number 📞</button><br>
-
-    </div>
+  <div class="container">
+    <h1>VIT Tinder ❤️‍🔥</h1>
+    <p class="tagline">VIT’s exclusive matchmaking hub 😏</p>
+    <p class="warning">⚠️ Only for VIT students! Outsiders, stay jealous 😎</p>
+    <button class="btn" onclick="location.href='signup.html'">Sign up with Phone Number 📞</button><br>
+  </div>
 </body>
 </html>
