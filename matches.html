@@ -127,9 +127,11 @@
     </div>
 
     <script>
+        // Fetch matched users from localStorage
         const matches = JSON.parse(localStorage.getItem("matches")) || [];
         const list = document.getElementById("matchList");
 
+        // Check if there are matches, if not display a message
         if (matches.length === 0) {
             list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
         } else {
@@ -158,14 +160,17 @@
             });
         }
 
+        // Navigate to home page
         function goHome() {
             location.href = "index.html";
         }
 
+        // Navigate to swipe page
         function goSwipe() {
             location.href = "swipe.html";
         }
 
+        // Copy phone number to clipboard
         function copy(phone) {
             navigator.clipboard.writeText(phone);
             alert("Phone number copied: " + phone);
