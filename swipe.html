@@ -1,131 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Swipe | VIT Tinder</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f0c29, #302b63);
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            flex-direction: column;
-            color: white;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <title>Swipe | VIT Tinder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      color: white;
+    }
 
-        .card {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            width: 350px;
-            max-width: 100%;
-            display: none;
-        }
+    .card {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      width: 350px;
+      max-width: 100%;
+    }
 
-        .card img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            object-fit: cover;
-            border: 2px solid #ff69b4;
-        }
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      border: 2px solid #ff69b4;
+    }
 
-        .actions {
-            margin-top: 20px;
-        }
+    .name {
+      font-size: 24px;
+      font-weight: 600;
+    }
 
-        .actions button {
-            background: #ff69b4;
-            border: none;
-            padding: 10px 15px;
-            margin: 5px;
-            border-radius: 25px;
-            cursor: pointer;
-            color: white;
-            transition: 0.3s;
-        }
+    .info {
+      font-size: 15px;
+      margin: 10px 0;
+    }
 
-        .actions button:hover {
-            box-shadow: 0 0 10px #ff69b4;
-        }
+    .btns {
+      display: flex;
+      justify-content: center;
+      margin-top: 15px;
+    }
 
-        #loading {
-            font-size: 20px;
-        }
+    .btns button {
+      background: #ff69b4;
+      border: none;
+      border-radius: 50px;
+      color: white;
+      padding: 10px 20px;
+      margin: 0 10px;
+      cursor: pointer;
+      font-size: 18px;
+    }
 
-        #noMore {
-            font-size: 18px;
-            color: lightgray;
-            display: none;
-            text-align: center;
-        }
-    </style>
+    .btns button:hover {
+      box-shadow: 0 0 10px #ff69b4;
+    }
+
+    .loading {
+      font-size: 18px;
+      color: #fff;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      display: none;
+      z-index: 100;
+      color: white;
+      max-width: 90%;
+      box-sizing: border-box;
+    }
+
+    .popup button {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .popup button:hover {
+      box-shadow: 0 0 10px #ff69b4;
+    }
+
+    @media (max-width: 500px) {
+      .card {
+        padding: 20px;
+        width: 100%;
+      }
+
+      .profile-pic {
+        width: 100px;
+        height: 100px;
+      }
+
+      .btns button {
+        width: 45%;
+        padding: 8px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <div id="loading">🔄 Loading profiles...</div>
-    <div class="card" id="profileCard">
-        <img id="profileImg" src="" alt="Profile">
-        <h3 id="profileName"></h3>
-        <p id="profileBio"></p>
-        <p><strong>Interests:</strong> <span id="profileInterests"></span></p>
-        <div class="actions">
-            <button onclick="swipeLeft()">❌ Dislike</button>
-            <button onclick="swipeRight()">❤️ Like</button>
-        </div>
-    </div>
-    <div id="noMore">🚫 No more profiles to show!</div>
+  <div class="card" id="profileCard">
+    <div class="loading" id="loading">Loading profile...</div>
+  </div>
 
-    <script>
-        let users = JSON.parse(localStorage.getItem("users")) || [];
-        let myUsername = localStorage.getItem("myUsername");
-        let remaining = users.filter(user => user.name.toLowerCase() !== myUsername?.toLowerCase());
-        let currentIndex = 0;
+  <div class="btns">
+    <button onclick="swipeLeft()">❌</button>
+    <button onclick="swipeRight()">❤️</button>
+  </div>
 
-        function showNextProfile() {
-            if (currentIndex >= remaining.length) {
-                document.getElementById("profileCard").style.display = "none";
-                document.getElementById("loading").style.display = "none";
-                document.getElementById("noMore").style.display = "block";
-                return;
-            }
+  <div class="popup" id="matchPopup">
+    <h3>🎉 It's a Match!</h3>
+    <p id="matchText"></p>
+    <button onclick="closeMatchPopup()">OK</button>
+  </div>
 
-            let user = remaining[currentIndex];
-            document.getElementById("profileImg").src = user.img;
-            document.getElementById("profileName").innerText = user.name;
-            document.getElementById("profileBio").innerText = user.bio;
-            document.getElementById("profileInterests").innerText = user.interests;
-            document.getElementById("profileCard").style.display = "block";
-            document.getElementById("loading").style.display = "none";
-            document.getElementById("noMore").style.display = "none";
-        }
+  <script>
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+    let myUsername = localStorage.getItem("myUsername");
+    let myPhone = localStorage.getItem("myPhone");
+    let currentIndex = 0;
+    let matches = JSON.parse(localStorage.getItem("matches")) || [];
 
-        function swipeLeft() {
-            currentIndex++;
-            showNextProfile();
-        }
+    users = users.filter(u => u.name !== myUsername);
+    const card = document.getElementById("profileCard");
+    const loading = document.getElementById("loading");
 
-        function swipeRight() {
-            let liked = JSON.parse(localStorage.getItem("likedUsers")) || [];
-            liked.push(remaining[currentIndex]);
-            localStorage.setItem("likedUsers", JSON.stringify(liked));
-            currentIndex++;
-            showNextProfile();
-        }
+    function showNextProfile() {
+      if (currentIndex >= users.length) {
+        card.innerHTML = "<div class='loading'>No more profiles to show.</div>";
+        return;
+      }
 
-        // Show first profile after delay
-        window.onload = function() {
-            setTimeout(showNextProfile, 1000);
+      let user = users[currentIndex];
+      card.innerHTML = `
+        <img src="${user.img}" class="profile-pic" alt="Avatar">
+        <div class="name">${user.name}</div>
+        <div class="info">📞 ${user.phone}</div>
+        <div class="info">📌 ${user.interests}</div>
+        <div class="info">📝 ${user.bio}</div>
+      `;
+    }
+
+    function swipeLeft() {
+      currentIndex++;
+      showNextProfile();
+    }
+
+    function swipeRight() {
+      let targetUser = users[currentIndex];
+      let alreadyMatched = matches.some(match =>
+        (match.name1 === myUsername && match.name2 === targetUser.name) ||
+        (match.name2 === myUsername && match.name1 === targetUser.name)
+      );
+
+      if (!alreadyMatched) {
+        let newMatch = {
+          name1: myUsername,
+          phone1: myPhone,
+          avatar1: (JSON.parse(localStorage.getItem("users")) || []).find(u => u.name === myUsername)?.img || "",
+          name2: targetUser.name,
+          phone2: targetUser.phone,
+          avatar2: targetUser.img
         };
-    </script>
+        matches.push(newMatch);
+        localStorage.setItem("matches", JSON.stringify(matches));
+
+        document.getElementById("matchText").innerText = `You and ${targetUser.name} liked each other!`;
+        document.getElementById("matchPopup").style.display = "block";
+      } else {
+        currentIndex++;
+        showNextProfile();
+      }
+    }
+
+    function closeMatchPopup() {
+      document.getElementById("matchPopup").style.display = "none";
+      currentIndex++;
+      showNextProfile();
+    }
+
+    showNextProfile();
+  </script>
 </body>
 </html>
