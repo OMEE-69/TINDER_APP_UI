@@ -131,92 +131,92 @@
     </div>
 
     <script>
-        let users = JSON.parse(localStorage.getItem("users")) || [];
-        let myName = localStorage.getItem("myUsername") || "";
-        let myPhone = localStorage.getItem("myPhone") || "";
-        let myLikes = JSON.parse(localStorage.getItem("myLikes")) || [];
-        let currentIndex = 0;
-        let previousIndex = null;
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+let myName = localStorage.getItem("myUsername") || "";
+let myPhone = localStorage.getItem("myPhone") || "";
+let myLikes = JSON.parse(localStorage.getItem("myLikes")) || [];
+let currentIndex = 0;
+let previousIndex = null;
 
-        let availableUsers = users.filter(user => user.name !== myName);
+let availableUsers = users.filter(user => user.name !== myName);
 
-        function loadProfile() {
-            if (currentIndex >= availableUsers.length) {
-                document.body.innerHTML = "<h2>No more profiles available!</h2>";
-                return;
-            }
+function loadProfile() {
+    if (currentIndex >= availableUsers.length) {
+        document.body.innerHTML = "<h2>No more profiles available!</h2>";
+        return;
+    }
 
-            let user = availableUsers[currentIndex];
-            document.getElementById("profileName").textContent = user.name;
-            document.getElementById("profileImg").src = user.img || 'https://via.placeholder.com/300x300.png?text=No+Image';
-            document.getElementById("profileBio").textContent = user.bio || "No bio provided.";
-            document.getElementById("profileInterest").textContent = user.interests || "N/A";
-            document.getElementById("profileCounter").textContent = `Profile ${currentIndex + 1} of ${availableUsers.length}`;
+    let user = availableUsers[currentIndex];
+    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("profileImg").src = user.img || 'https://via.placeholder.com/300x300.png?text=No+Image';
+    document.getElementById("profileBio").textContent = user.bio || "No bio provided.";
+    document.getElementById("profileInterest").textContent = user.interests || "N/A";
+    document.getElementById("profileCounter").textContent = Profile ${currentIndex + 1} of ${availableUsers.length};
+}
+
+function swipeLeft() {
+    previousIndex = currentIndex;
+    currentIndex++;
+    loadProfile();
+}
+
+function goBack() {
+    location.href = "index.html";
+}
+
+function swipeRight() {
+    let likedUser = availableUsers[currentIndex];
+    let likedUserLikesKey = likedUser.name + "_likes";
+    let likedUserLikes = JSON.parse(localStorage.getItem(likedUserLikesKey)) || [];
+
+    if (!myLikes.includes(likedUser.name)) {
+        myLikes.push(likedUser.name);
+        localStorage.setItem("myLikes", JSON.stringify(myLikes));
+    }
+
+    let myLikeKey = myName + "_likes";
+    let myLikeStore = JSON.parse(localStorage.getItem(myLikeKey)) || [];
+    if (!myLikeStore.includes(likedUser.name)) {
+        myLikeStore.push(likedUser.name);
+        localStorage.setItem(myLikeKey, JSON.stringify(myLikeStore));
+    }
+
+    if (likedUserLikes.includes(myName)) {
+        let matches = JSON.parse(localStorage.getItem("matches")) || [];
+        let isAlreadyMatched = matches.some(m =>
+            (m.name1 === myName && m.name2 === likedUser.name) ||
+            (m.name1 === likedUser.name && m.name2 === myName)
+        );
+
+        if (!isAlreadyMatched) {
+            matches.push({
+                name1: myName,
+                phone1: myPhone || "N/A",
+                name2: likedUser.name,
+                phone2: likedUser.phone || "N/A"
+            });
+            localStorage.setItem("matches", JSON.stringify(matches));
         }
 
-        function swipeLeft() {
-            previousIndex = currentIndex;
-            currentIndex++;
-            loadProfile();
-        }
+        document.getElementById("myPhone").textContent = myPhone;
+        document.getElementById("matchPhone").textContent = likedUser.phone || "N/A";
+        document.getElementById("matchPopup").style.display = "block";
 
-        function goBack() {
-            location.href = "index.html";
-        }
+        setTimeout(() => {
+            closePopup();
+        }, 5000);
+    }
 
-        function swipeRight() {
-            let likedUser = availableUsers[currentIndex];
-            let likedUserLikesKey = likedUser.name + "_likes";
-            let likedUserLikes = JSON.parse(localStorage.getItem(likedUserLikesKey)) || [];
+    previousIndex = currentIndex;
+    currentIndex++;
+    loadProfile();
+}
 
-            if (!myLikes.includes(likedUser.name)) {
-                myLikes.push(likedUser.name);
-                localStorage.setItem("myLikes", JSON.stringify(myLikes));
-            }
+function closePopup() {
+    document.getElementById("matchPopup").style.display = "none";
+}
 
-            let myLikeKey = myName + "_likes";
-            let myLikeStore = JSON.parse(localStorage.getItem(myLikeKey)) || [];
-            if (!myLikeStore.includes(likedUser.name)) {
-                myLikeStore.push(likedUser.name);
-                localStorage.setItem(myLikeKey, JSON.stringify(myLikeStore));
-            }
-
-            if (likedUserLikes.includes(myName)) {
-                let matches = JSON.parse(localStorage.getItem("matches")) || [];
-                let isAlreadyMatched = matches.some(m =>
-                    (m.name1 === myName && m.name2 === likedUser.name) ||
-                    (m.name1 === likedUser.name && m.name2 === myName)
-                );
-
-                if (!isAlreadyMatched) {
-                    matches.push({
-                        name1: myName,
-                        phone1: myPhone || "N/A",
-                        name2: likedUser.name,
-                        phone2: likedUser.phone || "N/A"
-                    });
-                    localStorage.setItem("matches", JSON.stringify(matches));
-                }
-
-                document.getElementById("myPhone").textContent = myPhone;
-                document.getElementById("matchPhone").textContent = likedUser.phone || "N/A";
-                document.getElementById("matchPopup").style.display = "block";
-
-                setTimeout(() => {
-                    closePopup();
-                }, 5000);
-            }
-
-            previousIndex = currentIndex;
-            currentIndex++;
-            loadProfile();
-        }
-
-        function closePopup() {
-            document.getElementById("matchPopup").style.display = "none";
-        }
-
-        loadProfile();
+loadProfile();
     </script>
 </body>
 </html>
