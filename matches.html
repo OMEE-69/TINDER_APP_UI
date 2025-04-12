@@ -5,31 +5,38 @@
     <title>Match List | VIT Tinder</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-           body {
+        body {
             background: linear-gradient(135deg, #0f0c29, #302b63);
             font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             color: white;
             flex-direction: column;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
+
         .card {
             background: rgba(0, 0, 0, 0.7);
             padding: 30px;
             border-radius: 15px;
             text-align: center;
             width: 400px;
+            max-width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            box-sizing: border-box;
         }
+
         ul {
             list-style: none;
             padding: 0;
             margin: 20px 0;
         }
+
         li {
             background: rgba(255, 255, 255, 0.1);
             padding: 12px;
@@ -38,11 +45,15 @@
             font-size: 15px;
             line-height: 1.6;
         }
+
         .match-info {
             display: flex;
             align-items: center;
+            justify-content: start;
+            flex-wrap: wrap;
             margin-bottom: 10px;
         }
+
         .avatar {
             width: 40px;
             height: 40px;
@@ -50,6 +61,7 @@
             margin-right: 10px;
             object-fit: cover;
         }
+
         .btn {
             margin: 10px 5px 0;
             padding: 10px 20px;
@@ -60,18 +72,48 @@
             cursor: pointer;
             font-size: 15px;
         }
+
         .btn:hover {
             box-shadow: 0 0 10px #ff69b4;
         }
+
         .copyable {
             cursor: pointer;
             text-decoration: underline;
             color: #ffd1ec;
         }
+
         .copyable:hover {
             color: #ffffff;
         }
-    
+
+        /* Responsive Styling */
+        @media (max-width: 500px) {
+            .card {
+                padding: 20px;
+                width: 100%;
+                max-height: none;
+            }
+
+            li {
+                font-size: 14px;
+            }
+
+            .match-info {
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+
+            .avatar {
+                width: 35px;
+                height: 35px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
     </style>
 </head>
 <body>
