@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Swipe Profiles | VIT Tinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+         body {
+            background: linear-gradient(135deg, #0f0c29, #302b63);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;                  
+            height: 100vh;
+            color: white;
+            flex-direction: column;
+        }
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            width: 350px;
+        }
+        img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            background-color: white;
+        }
+        button:hover {
+            box-shadow: 0 0 15px #ff69b4;
+        }
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+        }
+        .popup button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #profileCounter {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2 id="profileName">Loading...</h2>
+        <img id="profileImg" src="https://via.placeholder.com/300x300.png?text=No+Image">
+        <p id="profileBio"></p>
+        <p><strong>Interest:</strong> <span id="profileInterest"></span></p>
+        <div id="profileCounter"></div>
+        <div class="buttons">
+            <button onclick="goBack()">↩️</button>
+            <button onclick="swipeLeft()">❌</button>
+            <button onclick="swipeRight()">💖</button>
+        </div>
+    </div>
+
+    <div id="matchPopup" class="popup">
+        <h3>🎉 Match Found!</h3>
+        <p>Contact each other:</p>
+        <p><strong>You:</strong> <span id="myPhone"></span></p>
+        <p><strong>Matched User:</strong> <span id="matchPhone"></span></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+
+    <script>
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let myName = localStorage.getItem("myUsername") || "";
+        let myPhone = localStorage.getItem("myPhone") || "";
+        let myLikes = JSON.parse(localStorage.getItem("myLikes")) || [];
+        let currentIndex = 0;
+        let previousIndex = null;
+
+        let availableUsers = users.filter(user => user.name !== myName);
+
+        function loadProfile() {
+            if (currentIndex >= availableUsers.length) {
+                document.body.innerHTML = "<h2>No more profiles available!</h2>";
+                return;
+            }
+
+            let user = availableUsers[currentIndex];
+            document.getElementById("profileName").textContent = user.name;
+            document.getElementById("profileImg").src = user.img || 'https://via.placeholder.com/300x300.png?text=No+Image';
+            document.getElementById("profileBio").textContent = user.bio || "No bio provided.";
+            document.getElementById("profileInterest").textContent = user.interests || "N/A";
+            document.getElementById("profileCounter").textContent =
+                `Profile ${currentIndex + 1} of ${availableUsers.length}`;
+        }
+
+        function swipeLeft() {
+            previousIndex = currentIndex;
+            currentIndex++;
+            loadProfile();
+        }
+
+        function goBack() {
+            location.href = "index.html";
+        }
+
+        function swipeRight() {
+            let likedUser = availableUsers[currentIndex];
+            let likedUserLikesKey = likedUser.name + "_likes";
+            let likedUserLikes = JSON.parse(localStorage.getItem(likedUserLikesKey)) || [];
+
+            if (!myLikes.includes(likedUser.name)) {
+                myLikes.push(likedUser.name);
+                localStorage.setItem("myLikes", JSON.stringify(myLikes));
+            }
+
+            let myLikeKey = myName + "_likes";
+            let myLikeStore = JSON.parse(localStorage.getItem(myLikeKey)) || [];
+            if (!myLikeStore.includes(likedUser.name)) {
+                myLikeStore.push(likedUser.name);
+                localStorage.setItem(myLikeKey, JSON.stringify(myLikeStore));
+            }
+
+            if (likedUserLikes.includes(myName)) {
+                let matches = JSON.parse(localStorage.getItem("matches")) || [];
+                let isAlreadyMatched = matches.some(m =>
+                    (m.name1 === myName && m.name2 === likedUser.name) ||
+                    (m.name1 === likedUser.name && m.name2 === myName)
+                );
+
+                if (!isAlreadyMatched) {
+                    matches.push({
+                        name1: myName,
+                        phone1: myPhone || "N/A",
+                        name2: likedUser.name,
+                        phone2: likedUser.phone || "N/A"
+                    });
+                    localStorage.setItem("matches", JSON.stringify(matches));
+                }
+
+                document.getElementById("myPhone").textContent = myPhone;
+                document.getElementById("matchPhone").textContent = likedUser.phone || "N/A";
+                document.getElementById("matchPopup").style.display = "block";
+
+                setTimeout(() => {
+                    closePopup();
+                }, 5000);
+            }
+
+            previousIndex = currentIndex;
+            currentIndex++;
+            loadProfile();
+        }
+
+        function closePopup() {
+            document.getElementById("matchPopup").style.display = "none";
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

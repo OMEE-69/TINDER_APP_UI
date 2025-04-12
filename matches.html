@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Match List | VIT Tinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+           body {
+            background: linear-gradient(135deg, #0f0c29, #302b63);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            flex-direction: column;
+            margin: 0;
+        }
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .match-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+        .btn {
+            margin: 10px 5px 0;
+            padding: 10px 20px;
+            border: none;
+            background: #ff69b4;
+            color: #fff;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .btn:hover {
+            box-shadow: 0 0 10px #ff69b4;
+        }
+        .copyable {
+            cursor: pointer;
+            text-decoration: underline;
+            color: #ffd1ec;
+        }
+        .copyable:hover {
+            color: #ffffff;
+        }
+    
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>💘 Matched Profiles</h2>
+        <ul id="matchList"></ul>
+        <div>
+            <button class="btn" onclick="goHome()">🏠 Home</button>
+            <button class="btn" onclick="goSwipe()">💖 Swipe Again</button>
+        </div>
+    </div>
+
+    <script>
+        const matches = JSON.parse(localStorage.getItem("matches")) || [];
+        const list = document.getElementById("matchList");
+
+        if (matches.length === 0) {
+            list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
+        } else {
+            matches.forEach(match => {
+                const name1 = match.name1 || "Unknown";
+                const phone1 = match.phone1 || "N/A";
+                const avatar1 = match.avatar1 || "default-avatar1.jpg";
+
+                const name2 = match.name2 || "Unknown";
+                const phone2 = match.phone2 || "N/A";
+                const avatar2 = match.avatar2 || "default-avatar2.jpg";
+
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <div class="match-info">
+                        <img src="${avatar1}" alt="Avatar" class="avatar">
+                        <strong>${name1}</strong> (<span class="copyable" onclick="copy('${phone1}')">${phone1}</span>)
+                    </div>
+                    <p>matched with</p>
+                    <div class="match-info">
+                        <img src="${avatar2}" alt="Avatar" class="avatar">
+                        <strong>${name2}</strong> (<span class="copyable" onclick="copy('${phone2}')">${phone2}</span>)
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function goHome() {
+            location.href = "index.html";
+        }
+
+        function goSwipe() {
+            location.href = "swipe.html";
+        }
+
+        function copy(phone) {
+            navigator.clipboard.writeText(phone);
+            alert("Phone number copied: " + phone);
+        }
+    </script>
+</body>
+</html>
