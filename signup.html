@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Profile Setup | VIT Tinder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
-          body {
+        body {
             background: linear-gradient(135deg, #0f0c29, #302b63);
             font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             color: white;
             flex-direction: column;
             margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .card {
@@ -22,7 +25,8 @@
             padding: 40px;
             border-radius: 15px;
             text-align: center;
-            width: 380px;                
+            width: 380px;
+            max-width: 100%;
         }
 
         input, textarea, select {
@@ -80,6 +84,9 @@
             border-radius: 10px;
             text-align: center;
             display: none;
+            z-index: 100;
+            max-width: 90%;
+            box-sizing: border-box;
         }
 
         .popup button {
@@ -90,6 +97,27 @@
             margin-top: 10px;
             cursor: pointer;
             border-radius: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .card {
+                padding: 25px;
+            }
+
+            input, textarea, select {
+                width: 100%;
+            }
+
+            .avatar-preview img {
+                width: 70px;
+                height: 70px;
+            }
+
+            button {
+                width: 100%;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
