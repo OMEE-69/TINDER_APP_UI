@@ -157,8 +157,8 @@
         <button onclick="goToSwipe()">OK</button>
     </div>
 
-    <script>
-      function saveProfile() {
+   <script>
+function saveProfile() {
     let name = document.getElementById("name").value.trim();
     let phone = document.getElementById("phone").value.trim();
     let bio = document.getElementById("bio").value.trim();
@@ -186,7 +186,7 @@
         return;
     }
 
-    // ✅ Save or update profile
+    
     let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
     const userData = { name, phone, bio, interests, img: selectedAvatar };
 
@@ -201,10 +201,15 @@
         localStorage.setItem("myUsername", name);
         localStorage.setItem("myPhone", phone);
         document.getElementById("successPopup").style.display = "block";
+
+        // Redirect to the swipe page after success
+        setTimeout(function() {
+            location.href = "swipe.html";
+        }, 2000);  // Delay the redirection to let the user see the popup for 2 seconds
     } catch (error) {
         alert("❌ Storage Limit Reached! Try using a different browser.");
     }
 }
-    </script>
+   </script>
 </body>
 </html>
