@@ -126,55 +126,65 @@
         </div>
     </div>
 
-    <script>
-        // Fetch matched users from localStorage
-        const matches = JSON.parse(localStorage.getItem("matches")) || [];
-        const list = document.getElementById("matchList");
+  
+                <script>
+    const matches = JSON.parse(localStorage.getItem("matches")) || [];
+    const myUsername = localStorage.getItem("myUsername");
+    const list = document.getElementById("matchList");
 
-        // Check if there are matches, if not display a message
-        if (matches.length === 0) {
-            list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
-        } else {
-            matches.forEach(match => {
-                const name1 = match.name1 || "Unknown";
-                const phone1 = match.phone1 || "N/A";
-                const avatar1 = match.avatar1 || "default-avatar1.jpg";
+    if (matches.length === 0) {
+        list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
+    } else {
+        matches.forEach(match => {
+            let otherName, otherPhone, otherAvatar;
+            let meName, meAvatar;
 
-                const name2 = match.name2 || "Unknown";
-                const phone2 = match.phone2 || "N/A";
-                const avatar2 = match.avatar2 || "default-avatar2.jpg";
+            if (match.name1 === myUsername) {
+                otherName = match.name2;
+                otherPhone = match.phone2;
+                otherAvatar = match.avatar2;
+                meName = match.name1;
+                meAvatar = match.avatar1;
+            } else if (match.name2 === myUsername) {
+                otherName = match.name1;
+                otherPhone = match.phone1;
+                otherAvatar = match.avatar1;
+                meName = match.name2;
+                meAvatar = match.avatar2;
+            } else {
+                // skip if this match doesn't involve me
+                return;
+            }
 
-                const li = document.createElement("li");
-                li.innerHTML = `
-                    <div class="match-info">
-                        <img src="${avatar1}" alt="Avatar" class="avatar">
-                        <strong>${name1}</strong> (<span class="copyable" onclick="copy('${phone1}')">${phone1}</span>)
-                    </div>
-                    <p>matched with</p>
-                    <div class="match-info">
-                        <img src="${avatar2}" alt="Avatar" class="avatar">
-                        <strong>${name2}</strong> (<span class="copyable" onclick="copy('${phone2}')">${phone2}</span>)
-                    </div>
-                `;
-                list.appendChild(li);
-            });
-        }
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <div class="match-info">
+                    <img src="${meAvatar}" alt="Avatar" class="avatar">
+                    <strong>You</strong>
+                </div>
+                <p>matched with</p>
+                <div class="match-info">
+                    <img src="${otherAvatar}" alt="Avatar" class="avatar">
+                    <strong>${otherName}</strong> (<span class="copyable" onclick="copy('${otherPhone}')">${otherPhone}</span>)
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    }
 
-        // Navigate to home page
-        function goHome() {
-            location.href = "index.html";
-        }
+    function goHome() {
+        location.href = "index.html";
+    }
 
-        // Navigate to swipe page
-        function goSwipe() {
-            location.href = "swipe.html";
-        }
+    function goSwipe() {
+        location.href = "swipe.html";
+    }
 
-        // Copy phone number to clipboard
-        function copy(phone) {
-            navigator.clipboard.writeText(phone);
-            alert("Phone number copied: " + phone);
-        }
-    </script>
+    function copy(phone) {
+        navigator.clipboard.writeText(phone);
+        alert("Phone number copied: " + phone);
+    }
+</script>
+
 </body>
 </html>
