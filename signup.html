@@ -158,15 +158,7 @@
     </div>
 
     <script>
-       let selectedAvatar = "";
-
-function selectAvatar(img) {
-    document.querySelectorAll(".avatar-preview img").forEach(i => i.classList.remove("selected"));
-    img.classList.add("selected");
-    selectedAvatar = img.src;
-}
-
-function saveProfile() {
+      function saveProfile() {
     let name = document.getElementById("name").value.trim();
     let phone = document.getElementById("phone").value.trim();
     let bio = document.getElementById("bio").value.trim();
@@ -183,12 +175,25 @@ function saveProfile() {
     }
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // 🔒 Prevent duplicate phone number (except for the same user)
+    let phoneTaken = users.some(user => 
+        user.phone === phone && user.name.toLowerCase() !== name.toLowerCase()
+    );
+
+    if (phoneTaken) {
+        alert("❌ This phone number is already used by another profile!");
+        return;
+    }
+
+    // ✅ Save or update profile
     let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
+    const userData = { name, phone, bio, interests, img: selectedAvatar };
 
     if (index !== -1) {
-        users[index] = { name, phone, bio, interests, img: selectedAvatar };
+        users[index] = userData; // Update existing user
     } else {
-        users.push({ name, phone, bio, interests, img: selectedAvatar });
+        users.push(userData);    // Add new user
     }
 
     try {
@@ -199,14 +204,6 @@ function saveProfile() {
     } catch (error) {
         alert("❌ Storage Limit Reached! Try using a different browser.");
     }
-}
-
-function goToSwipe() {
-    location.href = "swipe.html";
-}
-
-function goHome() {
-    location.href = "index.html";
 }
     </script>
 </body>
