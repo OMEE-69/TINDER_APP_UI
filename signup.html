@@ -157,59 +157,75 @@
         <button onclick="goToSwipe()">OK</button>
     </div>
 
-   <script>
-function saveProfile() {
-    let name = document.getElementById("name").value.trim();
-    let phone = document.getElementById("phone").value.trim();
-    let bio = document.getElementById("bio").value.trim();
-    let interests = document.getElementById("interests").value;
+    <script>
+        let selectedAvatar = null;
 
-    if (!name || !phone || !bio || interests === "Choose Interests" || !selectedAvatar) {
-        alert("❌ Please fill all fields and select an avatar!");
-        return;
-    }
+        function selectAvatar(imgElement) {
+            const avatarImages = document.querySelectorAll('.avatar-preview img');
+            avatarImages.forEach(img => img.classList.remove('selected'));
+            imgElement.classList.add('selected');
+            selectedAvatar = imgElement.src;
+        }
 
-    if (!/^\d{10}$/.test(phone)) {
-        alert("❌ Please enter a valid 10-digit phone number!");
-        return;
-    }
+        function saveProfile() {
+            let name = document.getElementById("name").value.trim();
+            let phone = document.getElementById("phone").value.trim();
+            let bio = document.getElementById("bio").value.trim();
+            let interests = document.getElementById("interests").value;
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
+            if (!name || !phone || !bio || interests === "Choose Interests" || !selectedAvatar) {
+                alert("❌ Please fill all fields and select an avatar!");
+                return;
+            }
 
-    // 🔒 Prevent duplicate phone number (except for the same user)
-    let phoneTaken = users.some(user => 
-        user.phone === phone && user.name.toLowerCase() !== name.toLowerCase()
-    );
+            if (!/^\d{10}$/.test(phone)) {
+                alert("❌ Please enter a valid 10-digit phone number!");
+                return;
+            }
 
-    if (phoneTaken) {
-        alert("❌ This phone number is already used by another profile!");
-        return;
-    }
+            let users = JSON.parse(localStorage.getItem("users")) || [];
 
-    
-    let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
-    const userData = { name, phone, bio, interests, img: selectedAvatar };
+            // Prevent duplicate phone number (except for the same user)
+            let phoneTaken = users.some(user => 
+                user.phone === phone && user.name.toLowerCase() !== name.toLowerCase()
+            );
 
-    if (index !== -1) {
-        users[index] = userData; // Update existing user
-    } else {
-        users.push(userData);    // Add new user
-    }
+            if (phoneTaken) {
+                alert("❌ This phone number is already used by another profile!");
+                return;
+            }
 
-    try {
-        localStorage.setItem("users", JSON.stringify(users));
-        localStorage.setItem("myUsername", name);
-        localStorage.setItem("myPhone", phone);
-        document.getElementById("successPopup").style.display = "block";
+            let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
+            const userData = { name, phone, bio, interests, img: selectedAvatar };
 
-        // Redirect to the swipe page after success
-        setTimeout(function() {
+            if (index !== -1) {
+                users[index] = userData; // Update existing user
+            } else {
+                users.push(userData);    // Add new user
+            }
+
+            try {
+                localStorage.setItem("users", JSON.stringify(users));
+                localStorage.setItem("myUsername", name);
+                localStorage.setItem("myPhone", phone);
+                document.getElementById("successPopup").style.display = "block";
+
+                // Redirect to the swipe page after success
+                setTimeout(function() {
+                    location.href = "swipe.html";  // Ensure the redirection happens here
+                }, 2000);  // Delay the redirection to let the user see the popup for 2 seconds
+            } catch (error) {
+                alert("❌ Storage Limit Reached! Try using a different browser.");
+            }
+        }
+
+        function goHome() {
+            location.href = "index.html";
+        }
+
+        function goToSwipe() {
             location.href = "swipe.html";
-        }, 2000);  // Delay the redirection to let the user see the popup for 2 seconds
-    } catch (error) {
-        alert("❌ Storage Limit Reached! Try using a different browser.");
-    }
-}
-   </script>
+        }
+    </script>
 </body>
 </html>
