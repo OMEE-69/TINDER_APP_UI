@@ -1,205 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Match List | VIT Tinder</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
-  <style>
-    body {
-      background: linear-gradient(135deg, #0f0c29, #302b63);
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-      color: white;
-    }
-
-    .card {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
-      border-radius: 15px;
-      width: 400px;
-      max-width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-sizing: border-box;
-      text-align: center;
-    }
-
-    h2 {
-      margin-bottom: 20px;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 20px 0;
-    }
-
-    li {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 10px;
-      font-size: 15px;
-      text-align: left;
-    }
-
-    .match-info {
-      display: flex;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 10px;
-      object-fit: cover;
-      border: 2px solid #ff69b4;
-    }
-
-    .btn {
-      margin: 5px;
-      padding: 10px 20px;
-      border: none;
-      background: #ff69b4;
-      color: white;
-      border-radius: 30px;
-      cursor: pointer;
-      font-size: 15px;
-    }
-
-    .btn:hover {
-      box-shadow: 0 0 10px #ff69b4;
-    }
-
-    .copyable {
-      cursor: pointer;
-      color: #ffd1ec;
-      text-decoration: underline;
-    }
-
-    .copyable:hover {
-      color: #fff;
-    }
-
-    @media (max-width: 500px) {
-      .card {
-        padding: 20px;
-        max-height: none;
-      }
-
-      li {
-        font-size: 14px;
-      }
-
-      .avatar {
-        width: 35px;
-        height: 35px;
-      }
-
-      .btn {
-        width: 100%;
-        margin-top: 10px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h2>💘 Matched Profiles</h2>
-    <ul id="matchList">
-      <li>Loading matches...</li>
-    </ul>
-    <button class="btn" onclick="goHome()">🏠 Home</button>
-    <button class="btn" onclick="goSwipe()">💖 Swipe Again</button>
-  </div>
-
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
-      authDomain: "vit-tinder-c3186.firebaseapp.com",
-      projectId: "vit-tinder-c3186",
-      storageBucket: "vit-tinder-c3186.appspot.com",
-      messagingSenderId: "266962368862",
-      appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
-    };
-
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    const matchList = document.getElementById("matchList");
-    const myUsername = localStorage.getItem("myUsername");
-
-    async function loadMatches() {
-      if (!myUsername) {
-        matchList.innerHTML = "<li style='color: #ff69b4;'>Please log in first.</li>";
-        return;
-      }
-
-      matchList.innerHTML = "";
-
-      const matches = await db.collection("matches").get();
-      let found = false;
-
-      matches.forEach(doc => {
-        const match = doc.data();
-        let other, me;
-
-        if (match.name1 === myUsername) {
-          me = { name: match.name1, phone: match.phone1, avatar: match.avatar1 };
-          other = { name: match.name2, phone: match.phone2, avatar: match.avatar2 };
-        } else if (match.name2 === myUsername) {
-          me = { name: match.name2, phone: match.phone2, avatar: match.avatar2 };
-          other = { name: match.name1, phone: match.phone1, avatar: match.avatar1 };
-        } else {
-          return;
+    <meta charset="UTF-8">
+    <title>Match List | VIT Tinder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        const li = document.createElement("li");
-        li.innerHTML = `
-          <div class="match-info">
-            <img src="${me.avatar}" alt="Your Avatar" class="avatar">
-            <strong>You</strong>
-          </div>
-          <p>matched with</p>
-          <div class="match-info">
-            <img src="${other.avatar}" alt="${other.name}'s Avatar" class="avatar">
-            <strong>${other.name}</strong> (<span class="copyable" onclick="copy('${other.phone}')">${other.phone}</span>)
-          </div>
-        `;
-        matchList.appendChild(li);
-        found = true;
-      });
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            width: 400px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
 
-      if (!found) {
-        matchList.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
-      }
-    }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
 
-    function copy(text) {
-      navigator.clipboard.writeText(text);
-      alert("Phone number copied: " + text);
-    }
+        li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
 
-    function goHome() {
-      location.href = "index.html";
-    }
+        .match-info {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
 
-    function goSwipe() {
-      location.href = "swipe.html";
-    }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
 
-    loadMatches();
-  </script>
+        .btn {
+            margin: 10px 5px 0;
+            padding: 10px 20px;
+            border: none;
+            background: #ff69b4;
+            color: #fff;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 10px #ff69b4;
+        }
+
+        .copyable {
+            cursor: pointer;
+            text-decoration: underline;
+            color: #ffd1ec;
+        }
+
+        .copyable:hover {
+            color: #ffffff;
+        }
+
+        /* Responsive Styling */
+        @media (max-width: 500px) {
+            .card {
+                padding: 20px;
+                width: 100%;
+                max-height: none;
+            }
+
+            li {
+                font-size: 14px;
+            }
+
+            .match-info {
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+
+            .avatar {
+                width: 35px;
+                height: 35px;
+            }
+
+            .btn {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>💘 Matched Profiles</h2>
+        <ul id="matchList"></ul>
+        <div>
+            <button class="btn" onclick="goHome()">🏠 Home</button>
+            <button class="btn" onclick="goSwipe()">💖 Swipe Again</button>
+        </div>
+    </div>
+
+    <script>
+        const matches = JSON.parse(localStorage.getItem("matches")) || [];
+        const list = document.getElementById("matchList");
+
+        if (matches.length === 0) {
+            list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
+        } else {
+            matches.forEach(match => {
+                const name1 = match.name1 || "Unknown";
+                const phone1 = match.phone1 || "N/A";
+                const avatar1 = match.avatar1 || "default-avatar1.jpg";
+
+                const name2 = match.name2 || "Unknown";
+                const phone2 = match.phone2 || "N/A";
+                const avatar2 = match.avatar2 || "default-avatar2.jpg";
+
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <div class="match-info">
+                        <img src="${avatar1}" alt="Avatar" class="avatar">
+                        <strong>${name1}</strong> (<span class="copyable" onclick="copy('${phone1}')">${phone1}</span>)
+                    </div>
+                    <p>matched with</p>
+                    <div class="match-info">
+                        <img src="${avatar2}" alt="Avatar" class="avatar">
+                        <strong>${name2}</strong> (<span class="copyable" onclick="copy('${phone2}')">${phone2}</span>)
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function goHome() {
+            location.href = "index.html";
+        }
+
+        function goSwipe() {
+            location.href = "swipe.html";
+        }
+
+        function copy(phone) {
+            navigator.clipboard.writeText(phone);
+            alert("Phone number copied: " + phone);
+        }
+    </script>
 </body>
 </html>
