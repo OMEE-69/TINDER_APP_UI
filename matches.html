@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <!-- Firebase SDK Imports -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
 
     <meta charset="UTF-8">
     <title>Match List | VIT Tinder</title>
@@ -130,24 +131,20 @@
         </div>
     </div>
 
-    <!-- Firebase Integration -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
-    
+    <!-- Firebase Initialization -->
     <script>
-      // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
-    authDomain: "vit-tinder-c3186.firebaseapp.com",
-    projectId: "vit-tinder-c3186",
-    storageBucket: "vit-tinder-c3186.firebasestorage.app",
-    messagingSenderId: "266962368862",
-    appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
-  };
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
+            authDomain: "vit-tinder-c3186.firebaseapp.com",
+            projectId: "vit-tinder-c3186",
+            storageBucket: "vit-tinder-c3186.firebasestorage.app",
+            messagingSenderId: "266962368862",
+            appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
+        };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         const matchesRef = db.collection("matches"); // Reference to the matches collection
