@@ -144,17 +144,19 @@
 
   <script>
     // Replace this with your actual Firebase config
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
-    };
+    // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
+    authDomain: "vit-tinder-c3186.firebaseapp.com",
+    projectId: "vit-tinder-c3186",
+    storageBucket: "vit-tinder-c3186.firebasestorage.app",
+    messagingSenderId: "266962368862",
+    appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
+  };
 
-    firebase.initializeApp(firebaseConfig);
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
     const db = firebase.database();
 
     let users = [];
