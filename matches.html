@@ -126,65 +126,88 @@
         </div>
     </div>
 
-  
-                <script>
-    const matches = JSON.parse(localStorage.getItem("matches")) || [];
-    const myUsername = localStorage.getItem("myUsername");
-    const list = document.getElementById("matchList");
+    <!-- Firebase Integration -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+    
+    <script>
+      // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
+    authDomain: "vit-tinder-c3186.firebaseapp.com",
+    projectId: "vit-tinder-c3186",
+    storageBucket: "vit-tinder-c3186.firebasestorage.app",
+    messagingSenderId: "266962368862",
+    appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
+  };
 
-    if (matches.length === 0) {
-        list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
-    } else {
-        matches.forEach(match => {
-            let otherName, otherPhone, otherAvatar;
-            let meName, meAvatar;
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
 
-            if (match.name1 === myUsername) {
-                otherName = match.name2;
-                otherPhone = match.phone2;
-                otherAvatar = match.avatar2;
-                meName = match.name1;
-                meAvatar = match.avatar1;
-            } else if (match.name2 === myUsername) {
-                otherName = match.name1;
-                otherPhone = match.phone1;
-                otherAvatar = match.avatar1;
-                meName = match.name2;
-                meAvatar = match.avatar2;
+        const db = firebase.firestore();
+
+        const matchesRef = db.collection("matches"); // Reference to the matches collection
+        const myUsername = localStorage.getItem("myUsername");  // Ensure this is set correctly
+        const list = document.getElementById("matchList");
+
+        // Fetch matches from Firestore
+        async function loadMatches() {
+            const snapshot = await matchesRef.where("name1", "==", myUsername)
+                                                .get();
+            if (snapshot.empty) {
+                list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
             } else {
-                // skip if this match doesn't involve me
-                return;
+                snapshot.forEach(doc => {
+                    const match = doc.data();
+                    let otherName, otherPhone, otherAvatar;
+                    let meName, meAvatar;
+
+                    if (match.name1 === myUsername) {
+                        otherName = match.name2;
+                        otherPhone = match.phone2;
+                        otherAvatar = match.avatar2;
+                        meName = match.name1;
+                        meAvatar = match.avatar1;
+                    } else if (match.name2 === myUsername) {
+                        otherName = match.name1;
+                        otherPhone = match.phone1;
+                        otherAvatar = match.avatar1;
+                        meName = match.name2;
+                        meAvatar = match.avatar2;
+                    }
+
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                        <div class="match-info">
+                            <img src="${meAvatar}" alt="Avatar" class="avatar">
+                            <strong>You</strong>
+                        </div>
+                        <p>matched with</p>
+                        <div class="match-info">
+                            <img src="${otherAvatar}" alt="Avatar" class="avatar">
+                            <strong>${otherName}</strong> (<span class="copyable" onclick="copy('${otherPhone}')">${otherPhone}</span>)
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
             }
+        }
 
-            const li = document.createElement("li");
-            li.innerHTML = `
-                <div class="match-info">
-                    <img src="${meAvatar}" alt="Avatar" class="avatar">
-                    <strong>You</strong>
-                </div>
-                <p>matched with</p>
-                <div class="match-info">
-                    <img src="${otherAvatar}" alt="Avatar" class="avatar">
-                    <strong>${otherName}</strong> (<span class="copyable" onclick="copy('${otherPhone}')">${otherPhone}</span>)
-                </div>
-            `;
-            list.appendChild(li);
-        });
-    }
+        // Call the function to load matches on page load
+        loadMatches();
 
-    function goHome() {
-        location.href = "index.html";
-    }
+        function goHome() {
+            location.href = "index.html";
+        }
 
-    function goSwipe() {
-        location.href = "swipe.html";
-    }
+        function goSwipe() {
+            location.href = "swipe.html";
+        }
 
-    function copy(phone) {
-        navigator.clipboard.writeText(phone);
-        alert("Phone number copied: " + phone);
-    }
-</script>
-
+        function copy(phone) {
+            navigator.clipboard.writeText(phone);
+            alert("Phone number copied: " + phone);
+        }
+    </script>
 </body>
 </html>
