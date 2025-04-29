@@ -157,7 +157,24 @@
         <button onclick="goToSwipe()">OK</button>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
     <script>
+       // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
+    authDomain: "vit-tinder-c3186.firebaseapp.com",
+    projectId: "vit-tinder-c3186",
+    storageBucket: "vit-tinder-c3186.firebasestorage.app",
+    messagingSenderId: "266962368862",
+    appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+        const db = firebase.firestore();
+
         let selectedAvatar = null;
 
         function selectAvatar(imgElement) {
@@ -166,17 +183,6 @@
             imgElement.classList.add('selected');
             selectedAvatar = imgElement.src;
         }
-       const firebaseConfig = {
-    apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
-    authDomain: "vit-tinder-c3186.firebaseapp.com",
-    projectId: "vit-tinder-c3186",
-    storageBucket: "vit-tinder-c3186.firebasestorage.app",
-    messagingSenderId: "266962368862",
-    appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
-  };
- 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
 
         function saveProfile() {
             let name = document.getElementById("name").value.trim();
@@ -194,40 +200,31 @@
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem("users")) || [];
+            // Prepare user data to save in Firebase Firestore
+            const userData = {
+                name: name,
+                phone: phone,
+                bio: bio,
+                interests: interests,
+                avatar: selectedAvatar
+            };
 
-            // Prevent duplicate phone number (except for the same user)
-            let phoneTaken = users.some(user => 
-                user.phone === phone && user.name.toLowerCase() !== name.toLowerCase()
-            );
+            // Save profile data to Firestore
+            db.collection("users").doc(phone).set(userData)
+                .then(() => {
+                    localStorage.setItem("myUsername", name);
+                    localStorage.setItem("myPhone", phone);
+                    document.getElementById("successPopup").style.display = "block";
 
-            if (phoneTaken) {
-                alert("❌ This phone number is already used by another profile!");
-                return;
-            }
-
-            let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
-            const userData = { name, phone, bio, interests, img: selectedAvatar };
-
-            if (index !== -1) {
-                users[index] = userData; // Update existing user
-            } else {
-                users.push(userData);    // Add new user
-            }
-
-            try {
-                localStorage.setItem("users", JSON.stringify(users));
-                localStorage.setItem("myUsername", name);
-                localStorage.setItem("myPhone", phone);
-                document.getElementById("successPopup").style.display = "block";
-
-                // Redirect to the swipe page after success
-                setTimeout(function() {
-                    location.href = "swipe.html";  // Ensure the redirection happens here
-                }, 2000);  // Delay the redirection to let the user see the popup for 2 seconds
-            } catch (error) {
-                alert("❌ Storage Limit Reached! Try using a different browser.");
-            }
+                    // Redirect to the swipe page after success
+                    setTimeout(function() {
+                        location.href = "swipe.html";  // Ensure the redirection happens here
+                    }, 2000);  // Delay the redirection to let the user see the popup for 2 seconds
+                })
+                .catch((error) => {
+                    console.error("Error adding document: ", error);
+                    alert("❌ Something went wrong. Please try again.");
+                });
         }
 
         function goHome() {
