@@ -137,100 +137,122 @@
     <p id="matchText"></p>
     <button onclick="closeMatchPopup()">OK</button>
   </div>
-<script>
-  let allUsers = JSON.parse(localStorage.getItem("users")) || [];
-  let myUsername = localStorage.getItem("myUsername");
-  let myPhone = localStorage.getItem("myPhone");
-  let myAvatar = allUsers.find(u => u.name === myUsername)?.img || "";
 
-  // Remove self from swipe list
-  let users = allUsers.filter(u => u.name !== myUsername);
-  let currentIndex = 0;
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
 
-  let matches = JSON.parse(localStorage.getItem("matches")) || [];
-  let likes = JSON.parse(localStorage.getItem("likes")) || [];
+  <script>
+    // Replace this with your actual Firebase config
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
 
-  const card = document.getElementById("profileCard");
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-  function showNextProfile() {
-    if (currentIndex >= users.length) {
-      card.innerHTML = "<div class='loading'>No more profiles to show.</div>";
-      return;
+    let users = [];
+    let currentIndex = 0;
+    let myUsername = localStorage.getItem("myUsername");
+    let myPhone = localStorage.getItem("myPhone");
+    let myAvatar = "";
+    let likes = [];
+    let matches = [];
+
+    const card = document.getElementById("profileCard");
+
+    // Fetch users from Firebase
+    firebase.database().ref("users").once("value").then(snapshot => {
+      const data = snapshot.val() || {};
+      const allUsers = Object.values(data);
+      myAvatar = allUsers.find(u => u.name === myUsername)?.img || "";
+      users = allUsers.filter(u => u.name !== myUsername);
+      showNextProfile();
+    });
+
+    // Fetch likes and matches from Firebase
+    firebase.database().ref("likes").once("value").then(snapshot => {
+      likes = snapshot.val() ? Object.values(snapshot.val()) : [];
+    });
+
+    firebase.database().ref("matches").once("value").then(snapshot => {
+      matches = snapshot.val() ? Object.values(snapshot.val()) : [];
+    });
+
+    function showNextProfile() {
+      if (currentIndex >= users.length) {
+        card.innerHTML = "<div class='loading'>No more profiles to show.</div>";
+        return;
+      }
+
+      const user = users[currentIndex];
+      card.innerHTML = `
+        <img src="${user.img}" class="profile-pic" alt="Avatar">
+        <div class="name">${user.name}</div>
+        <div class="info">📌 ${user.interests}</div>
+        <div class="info">📝 ${user.bio}</div>
+      `;
     }
 
-    const user = users[currentIndex];
-
-    card.innerHTML = `
-      <img src="${user.img}" class="profile-pic" alt="Avatar">
-      <div class="name">${user.name}</div>
-      <div class="info">📌 ${user.interests}</div>
-      <div class="info">📝 ${user.bio}</div>
-    `;
-  }
-
-  function swipeLeft() {
-    currentIndex++;
-    showNextProfile();
-  }
-
-  function swipeRight() {
-    const targetUser = users[currentIndex];
-
-    // Check if targetUser already liked me
-    const isMutual = likes.some(
-      l => l.liker === targetUser.name && l.liked === myUsername
-    );
-
-    if (isMutual) {
-      // Save match
-      const match = {
-        name1: myUsername,
-        phone1: myPhone,
-        avatar1: myAvatar,
-        name2: targetUser.name,
-        phone2: targetUser.phone,
-        avatar2: targetUser.img
-      };
-
-      matches.push(match);
-      localStorage.setItem("matches", JSON.stringify(matches));
-
-      // Remove both mutual likes from pending likes list
-      likes = likes.filter(
-        l =>
-          !(
-            (l.liker === myUsername && l.liked === targetUser.name) ||
-            (l.liker === targetUser.name && l.liked === myUsername)
-          )
-      );
-      localStorage.setItem("likes", JSON.stringify(likes));
-
-      document.getElementById("matchText").innerHTML = `
-        You and <strong>${targetUser.name}</strong> liked each other!<br><br>
-        <strong>Their Number:</strong> ${targetUser.phone}<br>
-        <strong>Your Number:</strong> ${myPhone}
-      `;
-      document.getElementById("matchPopup").style.display = "block";
-    } else {
-      // Save my like
-      likes.push({ liker: myUsername, liked: targetUser.name });
-      localStorage.setItem("likes", JSON.stringify(likes));
-
+    function swipeLeft() {
       currentIndex++;
       showNextProfile();
     }
-  }
 
-  function closeMatchPopup() {
-    document.getElementById("matchPopup").style.display = "none";
-    currentIndex++;
-    showNextProfile();
-  }
+    function swipeRight() {
+      const targetUser = users[currentIndex];
 
-  showNextProfile();
-</script>
+      // Check if targetUser liked me
+      const isMutual = likes.some(l => l.liker === targetUser.name && l.liked === myUsername);
 
- 
-      
+      if (isMutual) {
+        const match = {
+          name1: myUsername,
+          phone1: myPhone,
+          avatar1: myAvatar,
+          name2: targetUser.name,
+          phone2: targetUser.phone,
+          avatar2: targetUser.img
+        };
+
+        // Save match to Firebase
+        const matchKey = db.ref("matches").push().key;
+        db.ref("matches/" + matchKey).set(match);
+
+        // Remove mutual likes
+        likes = likes.filter(l => !(
+          (l.liker === myUsername && l.liked === targetUser.name) ||
+          (l.liker === targetUser.name && l.liked === myUsername)
+        ));
+        db.ref("likes").set(likes);
+
+        document.getElementById("matchText").innerHTML = `
+          You and <strong>${targetUser.name}</strong> liked each other!<br><br>
+          <strong>Their Number:</strong> ${targetUser.phone}<br>
+          <strong>Your Number:</strong> ${myPhone}
+        `;
+        document.getElementById("matchPopup").style.display = "block";
+      } else {
+        const newLike = { liker: myUsername, liked: targetUser.name };
+        likes.push(newLike);
+        const likeKey = db.ref("likes").push().key;
+        db.ref("likes/" + likeKey).set(newLike);
+        currentIndex++;
+        showNextProfile();
+      }
+    }
+
+    function closeMatchPopup() {
+      document.getElementById("matchPopup").style.display = "none";
+      currentIndex++;
+      showNextProfile();
+    }
+  </script>
 </body>
 </html>
