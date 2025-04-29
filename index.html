@@ -111,7 +111,58 @@
     <h1>VIT Tinder ❤️‍🔥</h1>
     <p class="tagline">VIT’s exclusive matchmaking hub 😏</p>
     <p class="warning">⚠️ Only for VIT students! Outsiders, stay jealous 😎</p>
-    <button class="btn" onclick="location.href='signup.html'">Sign up with Phone Number 📞</button><br>
+    <button class="btn" onclick="signUpWithPhone()">Sign up with Phone Number 📞</button><br>
   </div>
+
+  <!-- Firebase Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
+    authDomain: "vit-tinder-c3186.firebaseapp.com",
+    projectId: "vit-tinder-c3186",
+    storageBucket: "vit-tinder-c3186.firebasestorage.app",
+    messagingSenderId: "266962368862",
+    appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+
+    const auth = firebase.auth();
+
+    // Function to handle phone number sign-up
+    function signUpWithPhone() {
+      const phoneNumber = prompt('Enter your phone number:');
+      if (!phoneNumber) {
+        alert("❌ Please enter a phone number!");
+        return;
+      }
+
+      const appVerifier = new firebase.auth.RecaptchaVerifier('signUpWithPhone', {
+        size: 'invisible',
+        callback: function(response) {
+          // Handle reCAPTCHA response here
+        }
+      });
+
+      auth.signInWithPhoneNumber(phoneNumber, appVerifier)
+        .then((confirmationResult) => {
+          const code = prompt('Enter the verification code sent to your phone:');
+          return confirmationResult.confirm(code);
+        })
+        .then((result) => {
+          // User signed in successfully
+          alert("✅ Phone number verified!");
+          location.href = "profileSetup.html"; // Redirect to profile setup
+        })
+        .catch((error) => {
+          alert("❌ Something went wrong: " + error.message);
+        });
+    }
+  </script>
 </body>
 </html>
