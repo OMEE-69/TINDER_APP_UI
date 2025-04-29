@@ -99,7 +99,7 @@
             border-radius: 5px;
         }
 
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 500px) {
             .card {
                 padding: 25px;
@@ -157,14 +157,11 @@
         <button onclick="goToSwipe()">OK</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
-    <script>
-        // Import necessary Firebase functions
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js';
-        import { getFirestore, doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js';
+    <!-- Firebase v9 Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
             authDomain: "vit-tinder-c3186.firebaseapp.com",
@@ -174,24 +171,23 @@
             appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
         let selectedAvatar = null;
 
-        function selectAvatar(imgElement) {
+        window.selectAvatar = function(imgElement) {
             const avatarImages = document.querySelectorAll('.avatar-preview img');
             avatarImages.forEach(img => img.classList.remove('selected'));
             imgElement.classList.add('selected');
             selectedAvatar = imgElement.src;
         }
 
-        function saveProfile() {
-            let name = document.getElementById("name").value.trim();
-            let phone = document.getElementById("phone").value.trim();
-            let bio = document.getElementById("bio").value.trim();
-            let interests = document.getElementById("interests").value;
+        window.saveProfile = async function() {
+            const name = document.getElementById("name").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const bio = document.getElementById("bio").value.trim();
+            const interests = document.getElementById("interests").value;
 
             if (!name || !phone || !bio || interests === "Choose Interests" || !selectedAvatar) {
                 alert("❌ Please fill all fields and select an avatar!");
@@ -203,39 +199,36 @@
                 return;
             }
 
-            // Prepare user data to save in Firebase Firestore
             const userData = {
-                name: name,
-                phone: phone,
-                bio: bio,
-                interests: interests,
+                name,
+                phone,
+                bio,
+                interests,
                 avatar: selectedAvatar
             };
 
-            // Save profile data to Firestore
-            setDoc(doc(db, "users", phone), userData)
-                .then(() => {
-                    localStorage.setItem("myUsername", name);
-                    localStorage.setItem("myPhone", phone);
-                    document.getElementById("successPopup").style.display = "block";
+            try {
+                await setDoc(doc(db, "users", phone), userData);
+                localStorage.setItem("myUsername", name);
+                localStorage.setItem("myPhone", phone);
+                document.getElementById("successPopup").style.display = "block";
 
-                    // Redirect to the swipe page after success
-                    setTimeout(function() {
-                        location.href = "swipe.html";  // Ensure the redirection happens here
-                    }, 2000);  // Delay the redirection to let the user see the popup for 2 seconds
-                })
-                .catch((error) => {
-                    console.error("Error adding document: ", error);
-                    alert("❌ Something went wrong. Please try again.");
-                });
+                // Delay to show popup
+                setTimeout(() => {
+                    window.location.href = "swipe.html";
+                }, 2000);
+            } catch (error) {
+                console.error("Error saving profile: ", error);
+                alert("❌ Something went wrong. Try again.");
+            }
         }
 
-        function goHome() {
-            location.href = "index.html";
+        window.goHome = function() {
+            window.location.href = "index.html";
         }
 
-        function goToSwipe() {
-            location.href = "swipe.html";
+        window.goToSwipe = function() {
+            window.location.href = "swipe.html";
         }
     </script>
 </body>
