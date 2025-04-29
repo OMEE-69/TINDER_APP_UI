@@ -143,20 +143,18 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-database-compat.js"></script>
 
   <script>
-    // Replace this with your actual Firebase config
-    // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
-    authDomain: "vit-tinder-c3186.firebaseapp.com",
-    projectId: "vit-tinder-c3186",
-    storageBucket: "vit-tinder-c3186.firebasestorage.app",
-    messagingSenderId: "266962368862",
-    appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
-  };
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
+      authDomain: "vit-tinder-c3186.firebaseapp.com",
+      projectId: "vit-tinder-c3186",
+      storageBucket: "vit-tinder-c3186.firebasestorage.app",
+      messagingSenderId: "266962368862",
+      appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
+    };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     let users = [];
