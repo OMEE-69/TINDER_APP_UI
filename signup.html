@@ -1,215 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Profile Setup | VIT Tinder</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    /* same styling as before (unchanged) */
-    body {
-      background: linear-gradient(135deg, #0f0c29, #302b63);
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      color: white;
-      flex-direction: column;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    .card {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 40px;
-      border-radius: 15px;
-      text-align: center;
-      width: 380px;
-      max-width: 100%;
-    }
-    input, textarea, select {
-      width: 90%;
-      padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 5px;
-    }
-    button {
-      background: #ff69b4;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 25px;
-      color: #fff;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      box-shadow: 0 0 10px #ff69b4;
-    }
-    .avatar-preview {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px 0 20px;
-    }
-    .avatar-preview img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 2px solid transparent;
-      cursor: pointer;
-      object-fit: cover;
-      transition: 0.2s;
-    }
-    .avatar-preview img.selected {
-      border-color: #ff69b4;
-      box-shadow: 0 0 10px #ff69b4;
-    }
-    .popup {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.9);
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      display: none;
-      z-index: 100;
-      max-width: 90%;
-      box-sizing: border-box;
-    }
-    .popup button {
-      background: green;
-      color: white;
-      border: none;
-      padding: 10px;
-      margin-top: 10px;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    @media (max-width: 500px) {
-      .card { padding: 25px; }
-      input, textarea, select { width: 100%; }
-      .avatar-preview img { width: 70px; height: 70px; }
-      button { width: 100%; margin-top: 10px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Profile Setup | VIT Tinder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            width: 380px;
+            max-width: 100%;
+        }
+
+        input, textarea, select {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            background: #ff69b4;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            box-shadow: 0 0 10px #ff69b4;
+        }
+
+        .avatar-preview {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0 20px;
+        }
+
+        .avatar-preview img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            object-fit: cover;
+            transition: 0.2s;
+        }
+
+        .avatar-preview img.selected {
+            border-color: #ff69b4;
+            box-shadow: 0 0 10px #ff69b4;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+
+        .popup button {
+            background: green;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 500px) {
+            .card {
+                padding: 25px;
+            }
+
+            input, textarea, select {
+                width: 100%;
+            }
+
+            .avatar-preview img {
+                width: 70px;
+                height: 70px;
+            }
+
+            button {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <div class="card">
-    <h2>Setup Profile</h2>
-    <input type="text" id="name" placeholder="Full Name" required><br>
-    <input type="tel" id="phone" placeholder="Phone Number" required><br>
-    <textarea id="bio" placeholder="Short bio" rows="3"></textarea><br>
+    <div class="card">
+        <h2>Setup Profile</h2>
+        <input type="text" id="name" placeholder="Full Name" required><br>
+        <input type="tel" id="phone" placeholder="Phone Number" required><br>
+        <textarea id="bio" placeholder="Short bio" rows="3"></textarea><br>
 
-    <label>Select Avatar:</label>
-    <div class="avatar-preview" id="avatarContainer">
-      <img src="th (1).jpeg" alt="Avatar 1" onclick="selectAvatar(this)">
-      <img src="th (2).jpeg" alt="Avatar 2" onclick="selectAvatar(this)">
-      <img src="th (3).jpeg" alt="Avatar 3" onclick="selectAvatar(this)">
-      <img src="th.jpeg" alt="Avatar 4" onclick="selectAvatar(this)">
+        <label>Select Avatar:</label>
+        <div class="avatar-preview" id="avatarContainer">
+            <img src="th (1).jpeg" alt="Avatar 1" onclick="selectAvatar(this)">
+            <img src="th (2).jpeg" alt="Avatar 2" onclick="selectAvatar(this)">
+            <img src="th (3).jpeg" alt="Avatar 3" onclick="selectAvatar(this)">
+            <img src="th.jpeg" alt="Avatar 4" onclick="selectAvatar(this)">
+        </div>
+
+        <select id="interests">
+            <option selected disabled>Choose Interests</option>
+            <option>Music</option>
+            <option>Sports</option>
+            <option>Coding</option>
+            <option>Anime</option>
+            <option>Gaming</option>
+            <option>Robotics</option>
+        </select><br>
+
+        <button onclick="saveProfile()">Save & Continue</button>
+        <button onclick="goHome()" style="background: gray;">⬅️ Back to Home</button>
     </div>
 
-    <select id="interests">
-      <option selected disabled>Choose Interests</option>
-      <option>Music</option>
-      <option>Sports</option>
-      <option>Coding</option>
-      <option>Anime</option>
-      <option>Gaming</option>
-      <option>Robotics</option>
-    </select><br>
+    <div id="successPopup" class="popup">
+        <h3>✅ Profile Setup Completed!</h3>
+        <p>You can now start swiping profiles.</p>
+        <button onclick="goToSwipe()">OK</button>
+    </div>
 
-    <button id="saveBtn" onclick="saveProfile()">Save & Continue</button>
-    <button onclick="goHome()" style="background: gray;">⬅️ Back to Home</button>
-  </div>
+    <script>
+        let selectedAvatar = "";
 
-  <div id="successPopup" class="popup">
-    <h3>✅ Profile Setup Completed!</h3>
-    <p>You can now start swiping profiles.</p>
-    <button onclick="goToSwipe()">OK</button>
-  </div>
+        function selectAvatar(img) {
+            document.querySelectorAll(".avatar-preview img").forEach(i => i.classList.remove("selected"));
+            img.classList.add("selected");
+            selectedAvatar = img.src;
+        }
 
-  <!-- Firebase v9 Modules -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        function saveProfile() {
+            let name = document.getElementById("name").value.trim();
+            let phone = document.getElementById("phone").value.trim();
+            let bio = document.getElementById("bio").value.trim();
+            let interests = document.getElementById("interests").value;
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
-      authDomain: "vit-tinder-c3186.firebaseapp.com",
-      projectId: "vit-tinder-c3186",
-      storageBucket: "vit-tinder-c3186.appspot.com", // ✅ fixed typo
-      messagingSenderId: "266962368862",
-      appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
-    };
+            if (!name || !phone || !bio || interests === "Choose Interests" || !selectedAvatar) {
+                alert("❌ Please fill all fields and select an avatar!");
+                return;
+            }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+            if (!/^\d{10}$/.test(phone)) {
+                alert("❌ Please enter a valid 10-digit phone number!");
+                return;
+            }
 
-    let selectedAvatar = null;
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+            let index = users.findIndex(user => user.name.toLowerCase() === name.toLowerCase());
 
-    window.selectAvatar = function(imgElement) {
-      const avatarImages = document.querySelectorAll('.avatar-preview img');
-      avatarImages.forEach(img => img.classList.remove('selected'));
-      imgElement.classList.add('selected');
-      selectedAvatar = imgElement.src;
-    }
+            if (index !== -1) {
+                users[index] = { name, phone, bio, interests, img: selectedAvatar };
+            } else {
+                users.push({ name, phone, bio, interests, img: selectedAvatar });
+            }
 
-    window.saveProfile = async function() {
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const bio = document.getElementById("bio").value.trim();
-      const interests = document.getElementById("interests").value;
-      const saveBtn = document.getElementById("saveBtn");
+            try {
+                localStorage.setItem("users", JSON.stringify(users));
+                localStorage.setItem("myUsername", name);
+                localStorage.setItem("myPhone", phone);
+                document.getElementById("successPopup").style.display = "block";
+            } catch (error) {
+                alert("❌ Storage Limit Reached! Try using a different browser.");
+            }
+        }
 
-      if (!name || !phone || !bio || interests === "Choose Interests" || !selectedAvatar) {
-        alert("❌ Please fill all fields and select an avatar!");
-        return;
-      }
+        function goToSwipe() {
+            location.href = "swipe.html";
+        }
 
-      if (!/^\d{10}$/.test(phone)) {
-        alert("❌ Please enter a valid 10-digit phone number!");
-        return;
-      }
-
-      saveBtn.disabled = true;
-      saveBtn.textContent = "Saving...";
-
-      const userData = { name, phone, bio, interests, avatar: selectedAvatar };
-
-      try {
-        await setDoc(doc(db, "users", phone), userData);
-        console.log("✅ User data saved to Firestore");
-
-        localStorage.setItem("myUsername", name);
-        localStorage.setItem("myPhone", phone);
-
-        document.getElementById("successPopup").style.display = "block";
-
-        setTimeout(() => {
-          console.log("➡️ Redirecting to swipe.html...");
-          window.location.assign("swipe.html"); // more reliable redirect
-        }, 2000);
-      } catch (error) {
-        console.error("❌ Error saving profile:", error);
-        alert("❌ Something went wrong. Try again.");
-        saveBtn.disabled = false;
-        saveBtn.textContent = "Save & Continue";
-      }
-    }
-
-    window.goHome = function() {
-      window.location.href = "index.html";
-    }
-
-    window.goToSwipe = function() {
-      window.location.assign("swipe.html");
-    }
-  </script>
+        function goHome() {
+            location.href = "index.html";
+        }
+    </script>
 </body>
 </html>
