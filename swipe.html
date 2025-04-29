@@ -1,126 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Profile Setup | VIT Tinder</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background: linear-gradient(135deg, #1d1e22, #3a3f51);
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      padding: 20px;
-      box-sizing: border-box;
-      color: white;
-    }
+    <meta charset="UTF-8">
+    <title>Swipe Profiles | VIT Tinder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    .card {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 30px;
-      border-radius: 15px;
-      width: 350px;
-      max-width: 100%;
-      text-align: center;
-    }
+        .card {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            width: 350px;
+            max-width: 100%;
+        }
 
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 5px;
-      border: none;
-      font-size: 16px;
-    }
+        img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
 
-    button {
-      background-color: #ff69b4;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 18px;
-      margin-top: 15px;
-    }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
 
-    button:hover {
-      box-shadow: 0 0 10px #ff69b4;
-    }
+        button {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            background-color: white;
+        }
 
-    h2 {
-      margin-bottom: 15px;
-    }
-  </style>
+        button:hover {
+            box-shadow: 0 0 15px #ff69b4;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 100;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+
+        .popup button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #profileCounter {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            img {
+                height: auto;
+                max-height: 250px;
+            }
+
+            button {
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+
+            .buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h2>Setup Profile</h2>
-    <input type="text" id="name" placeholder="Full Name" required><br>
-    <input type="text" id="phone" placeholder="Phone Number" required><br>
-    <input type="text" id="interests" placeholder="Your Interests (comma separated)"><br>
-    <textarea id="bio" rows="3" placeholder="Tell us about yourself..."></textarea><br>
-    <select id="avatar" required>
-      <option value="">Select Avatar</option>
-      <option value="https://i.pravatar.cc/150?img=3">Avatar 1</option>
-      <option value="https://i.pravatar.cc/150?img=5">Avatar 2</option>
-      <option value="https://i.pravatar.cc/150?img=8">Avatar 3</option>
-      <option value="https://i.pravatar.cc/150?img=12">Avatar 4</option>
-    </select>
-    <button onclick="saveProfile()">Save Profile</button>
-  </div>
+    <div class="card">
+        <h2 id="profileName">Loading...</h2>
+        <img id="profileImg" src="https://via.placeholder.com/300x300.png?text=No+Image">
+        <p id="profileBio"></p>
+        <p><strong>Interest:</strong> <span id="profileInterest"></span></p>
+        <div id="profileCounter"></div>
+        <div class="buttons">
+            <button onclick="goBack()">↩️</button>
+            <button onclick="swipeLeft()">❌</button>
+            <button onclick="swipeRight()">💖</button>
+        </div>
+    </div>
 
-  <!-- Firebase Modules -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+    <div id="matchPopup" class="popup">
+        <h3>🎉 Match Found!</h3>
+        <p>Contact each other:</p>
+        <p><strong>You:</strong> <span id="myPhone"></span></p>
+        <p><strong>Matched User:</strong> <span id="matchPhone"></span></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
-      authDomain: "vit-tinder-c3186.firebaseapp.com",
-      projectId: "vit-tinder-c3186",
-      storageBucket: "vit-tinder-c3186.appspot.com",
-      messagingSenderId: "266962368862",
-      appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
-    };
+    <script>
+        let users = JSON.parse(localStorage.getItem("users")) || [];
+        let myName = localStorage.getItem("myUsername") || "";
+        let myPhone = localStorage.getItem("myPhone") || "";
+        let myLikes = JSON.parse(localStorage.getItem("myLikes")) || [];
+        let currentIndex = 0;
+        let previousIndex = null;
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        let availableUsers = users.filter(user => user.name !== myName);
 
-    async function saveProfile() {
-      const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const interests = document.getElementById("interests").value.trim();
-      const bio = document.getElementById("bio").value.trim();
-      const img = document.getElementById("avatar").value;
+        function loadProfile() {
+            if (currentIndex >= availableUsers.length) {
+                document.body.innerHTML = "<h2>No more profiles available!</h2>";
+                return;
+            }
 
-      if (!name || !phone || !img) {
-        alert("Please fill all required fields and select an avatar.");
-        return;
-      }
+            let user = availableUsers[currentIndex];
+            document.getElementById("profileName").textContent = user.name;
+            document.getElementById("profileImg").src = user.img || 'https://via.placeholder.com/300x300.png?text=No+Image';
+            document.getElementById("profileBio").textContent = user.bio || "No bio provided.";
+            document.getElementById("profileInterest").textContent = user.interests || "N/A";
+            document.getElementById("profileCounter").textContent = `Profile ${currentIndex + 1} of ${availableUsers.length}`;
+        }
 
-      const user = {
-        name,
-        phone,
-        interests,
-        bio,
-        img
-      };
+        function swipeLeft() {
+            previousIndex = currentIndex;
+            currentIndex++;
+            loadProfile();
+        }
 
-      try {
-        await setDoc(doc(db, "users", name), user);
-        localStorage.setItem("myUsername", name);
-        localStorage.setItem("myPhone", phone);
-        window.location.href = "swipe.html";
-      } catch (error) {
-        console.error("Error saving profile:", error);
-        alert("Error saving profile. Please try again.");
-      }
-    }
-  </script>
+        function goBack() {
+            location.href = "index.html";
+        }
+
+        function swipeRight() {
+            let likedUser = availableUsers[currentIndex];
+            let likedUserLikesKey = likedUser.name + "_likes";
+            let likedUserLikes = JSON.parse(localStorage.getItem(likedUserLikesKey)) || [];
+
+            if (!myLikes.includes(likedUser.name)) {
+                myLikes.push(likedUser.name);
+                localStorage.setItem("myLikes", JSON.stringify(myLikes));
+            }
+
+            let myLikeKey = myName + "_likes";
+            let myLikeStore = JSON.parse(localStorage.getItem(myLikeKey)) || [];
+            if (!myLikeStore.includes(likedUser.name)) {
+                myLikeStore.push(likedUser.name);
+                localStorage.setItem(myLikeKey, JSON.stringify(myLikeStore));
+            }
+
+            if (likedUserLikes.includes(myName)) {
+                let matches = JSON.parse(localStorage.getItem("matches")) || [];
+                let isAlreadyMatched = matches.some(m =>
+                    (m.name1 === myName && m.name2 === likedUser.name) ||
+                    (m.name1 === likedUser.name && m.name2 === myName)
+                );
+
+                if (!isAlreadyMatched) {
+                    matches.push({
+                        name1: myName,
+                        phone1: myPhone || "N/A",
+                        name2: likedUser.name,
+                        phone2: likedUser.phone || "N/A"
+                    });
+                    localStorage.setItem("matches", JSON.stringify(matches));
+                }
+
+                document.getElementById("myPhone").textContent = myPhone;
+                document.getElementById("matchPhone").textContent = likedUser.phone || "N/A";
+                document.getElementById("matchPopup").style.display = "block";
+
+                setTimeout(() => {
+                    closePopup();
+                }, 5000);
+            }
+
+            previousIndex = currentIndex;
+            currentIndex++;
+            loadProfile();
+        }
+
+        function closePopup() {
+            document.getElementById("matchPopup").style.display = "none";
+        }
+
+        loadProfile();
+    </script>
 </body>
 </html>
