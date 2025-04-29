@@ -1,214 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Firebase SDK Imports -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+  <meta charset="UTF-8">
+  <title>Match List | VIT Tinder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      color: white;
+    }
 
-    <meta charset="UTF-8">
-    <title>Match List | VIT Tinder</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f0c29, #302b63);
-            font-family: 'Poppins', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: white;
-            flex-direction: column;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+    .card {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 15px;
+      width: 400px;
+      max-width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+      text-align: center;
+    }
 
-        .card {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            width: 400px;
-            max-width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
+    h2 {
+      margin-bottom: 20px;
+    }
 
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
-        }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
 
-        li {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 8px;
-            font-size: 15px;
-            line-height: 1.6;
-        }
+    li {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      font-size: 15px;
+      text-align: left;
+    }
 
-        .match-info {
-            display: flex;
-            align-items: center;
-            justify-content: start;
-            flex-wrap: wrap;
-            margin-bottom: 10px;
-        }
+    .match-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+      border: 2px solid #ff69b4;
+    }
 
-        .btn {
-            margin: 10px 5px 0;
-            padding: 10px 20px;
-            border: none;
-            background: #ff69b4;
-            color: #fff;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 15px;
-        }
+    .btn {
+      margin: 5px;
+      padding: 10px 20px;
+      border: none;
+      background: #ff69b4;
+      color: white;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 15px;
+    }
 
-        .btn:hover {
-            box-shadow: 0 0 10px #ff69b4;
-        }
+    .btn:hover {
+      box-shadow: 0 0 10px #ff69b4;
+    }
 
-        .copyable {
-            cursor: pointer;
-            text-decoration: underline;
-            color: #ffd1ec;
-        }
+    .copyable {
+      cursor: pointer;
+      color: #ffd1ec;
+      text-decoration: underline;
+    }
 
-        .copyable:hover {
-            color: #ffffff;
-        }
+    .copyable:hover {
+      color: #fff;
+    }
 
-        /* Responsive Styling */
-        @media (max-width: 500px) {
-            .card {
-                padding: 20px;
-                width: 100%;
-                max-height: none;
-            }
+    @media (max-width: 500px) {
+      .card {
+        padding: 20px;
+        max-height: none;
+      }
 
-            li {
-                font-size: 14px;
-            }
+      li {
+        font-size: 14px;
+      }
 
-            .match-info {
-                flex-direction: row;
-                justify-content: flex-start;
-            }
+      .avatar {
+        width: 35px;
+        height: 35px;
+      }
 
-            .avatar {
-                width: 35px;
-                height: 35px;
-            }
-
-            .btn {
-                width: 100%;
-                margin-top: 10px;
-            }
-        }
-    </style>
+      .btn {
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="card">
-        <h2>💘 Matched Profiles</h2>
-        <ul id="matchList"></ul>
-        <div>
-            <button class="btn" onclick="goHome()">🏠 Home</button>
-            <button class="btn" onclick="goSwipe()">💖 Swipe Again</button>
-        </div>
-    </div>
+  <div class="card">
+    <h2>💘 Matched Profiles</h2>
+    <ul id="matchList">
+      <li>Loading matches...</li>
+    </ul>
+    <button class="btn" onclick="goHome()">🏠 Home</button>
+    <button class="btn" onclick="goSwipe()">💖 Swipe Again</button>
+  </div>
 
-    <!-- Firebase Initialization -->
-    <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
-            authDomain: "vit-tinder-c3186.firebaseapp.com",
-            projectId: "vit-tinder-c3186",
-            storageBucket: "vit-tinder-c3186.firebasestorage.app",
-            messagingSenderId: "266962368862",
-            appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
-        };
+  <script>
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjZqQubVv7miSU18Zidy0MUItPv7y1vEs",
+      authDomain: "vit-tinder-c3186.firebaseapp.com",
+      projectId: "vit-tinder-c3186",
+      storageBucket: "vit-tinder-c3186.appspot.com",
+      messagingSenderId: "266962368862",
+      appId: "1:266962368862:web:3fb5f865a43bbb53ea77cf"
+    };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        const matchesRef = db.collection("matches"); // Reference to the matches collection
-        const myUsername = localStorage.getItem("myUsername");  // Ensure this is set correctly
-        const list = document.getElementById("matchList");
+    const matchList = document.getElementById("matchList");
+    const myUsername = localStorage.getItem("myUsername");
 
-        // Fetch matches from Firestore
-        async function loadMatches() {
-            const snapshot = await matchesRef.where("name1", "==", myUsername)
-                                                .get();
-            if (snapshot.empty) {
-                list.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
-            } else {
-                snapshot.forEach(doc => {
-                    const match = doc.data();
-                    let otherName, otherPhone, otherAvatar;
-                    let meName, meAvatar;
+    async function loadMatches() {
+      if (!myUsername) {
+        matchList.innerHTML = "<li style='color: #ff69b4;'>Please log in first.</li>";
+        return;
+      }
 
-                    if (match.name1 === myUsername) {
-                        otherName = match.name2;
-                        otherPhone = match.phone2;
-                        otherAvatar = match.avatar2;
-                        meName = match.name1;
-                        meAvatar = match.avatar1;
-                    } else if (match.name2 === myUsername) {
-                        otherName = match.name1;
-                        otherPhone = match.phone1;
-                        otherAvatar = match.avatar1;
-                        meName = match.name2;
-                        meAvatar = match.avatar2;
-                    }
+      matchList.innerHTML = "";
 
-                    const li = document.createElement("li");
-                    li.innerHTML = `
-                        <div class="match-info">
-                            <img src="${meAvatar}" alt="Avatar" class="avatar">
-                            <strong>You</strong>
-                        </div>
-                        <p>matched with</p>
-                        <div class="match-info">
-                            <img src="${otherAvatar}" alt="Avatar" class="avatar">
-                            <strong>${otherName}</strong> (<span class="copyable" onclick="copy('${otherPhone}')">${otherPhone}</span>)
-                        </div>
-                    `;
-                    list.appendChild(li);
-                });
-            }
+      const matches = await db.collection("matches").get();
+      let found = false;
+
+      matches.forEach(doc => {
+        const match = doc.data();
+        let other, me;
+
+        if (match.name1 === myUsername) {
+          me = { name: match.name1, phone: match.phone1, avatar: match.avatar1 };
+          other = { name: match.name2, phone: match.phone2, avatar: match.avatar2 };
+        } else if (match.name2 === myUsername) {
+          me = { name: match.name2, phone: match.phone2, avatar: match.avatar2 };
+          other = { name: match.name1, phone: match.phone1, avatar: match.avatar1 };
+        } else {
+          return;
         }
 
-        // Call the function to load matches on page load
-        loadMatches();
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="match-info">
+            <img src="${me.avatar}" alt="Your Avatar" class="avatar">
+            <strong>You</strong>
+          </div>
+          <p>matched with</p>
+          <div class="match-info">
+            <img src="${other.avatar}" alt="${other.name}'s Avatar" class="avatar">
+            <strong>${other.name}</strong> (<span class="copyable" onclick="copy('${other.phone}')">${other.phone}</span>)
+          </div>
+        `;
+        matchList.appendChild(li);
+        found = true;
+      });
 
-        function goHome() {
-            location.href = "index.html";
-        }
+      if (!found) {
+        matchList.innerHTML = "<li style='color: #ff69b4;'>No matches yet! 😢</li>";
+      }
+    }
 
-        function goSwipe() {
-            location.href = "swipe.html";
-        }
+    function copy(text) {
+      navigator.clipboard.writeText(text);
+      alert("Phone number copied: " + text);
+    }
 
-        function copy(phone) {
-            navigator.clipboard.writeText(phone);
-            alert("Phone number copied: " + phone);
-        }
-    </script>
+    function goHome() {
+      location.href = "index.html";
+    }
+
+    function goSwipe() {
+      location.href = "swipe.html";
+    }
+
+    loadMatches();
+  </script>
 </body>
 </html>
