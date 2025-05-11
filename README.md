@@ -40,6 +40,4 @@ If you want to take this project forward, feel free to fork it and make your own
 
 ---
 
-## ⭐️ Show Some Love
 
-If you enjoyed the concept, give this repo a ⭐ to show support!
