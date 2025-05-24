@@ -1,4 +1,4 @@
-# VIT_TINDER 💘
+# VIT TINDER UI ❤️‍🔥
 
 Welcome to **VIT_TINDER** – a custom-designed Tinder-style UI made just for fun, inspired by swipe-based dating apps, and tailored in **my own style**!
 
